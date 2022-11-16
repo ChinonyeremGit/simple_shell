@@ -9,14 +9,9 @@
  */
 int main(int ac, char *av[], char *env[])
 {
-	char *buf;
 	(void)ac;
-	(void)av;
 	(void)env;
 
-	pass_betty();
-	buf = _getline();
-
-	printf("%s\n", buf);
+	shell(av);
 	return (0);
 }
