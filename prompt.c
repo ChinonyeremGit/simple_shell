@@ -7,10 +7,10 @@
  */
 int shell(char *av[])
 {
-	char *buf = NULL, **args;
+	char *buf = NULL, **args, *str_exe, c;
 	const char delimeter = 32;
 	pid_t fork_id;
-	int factor = 1;
+	int factor = 1, i = 0;
 
 	while (factor)
 	{
@@ -26,7 +26,15 @@ int shell(char *av[])
 		if (fork_id  == 0)
 		{
 			if (execve(args[0], args, NULL) == -1)
-				printf("%s: No such file or directory\n", av[0]);
+			{
+				str_exe = av[0];
+				while (str_exe[i])
+				{
+					c = str_exe[i++];
+					write(1, &c, 1);
+				}
+				perror(": No such file or directory\n");
+			}
 		}
 		else
 			wait(NULL);
