@@ -23,21 +23,19 @@ int delimeter_count(char *str, const char *delimeter)
  * _strtok - functin to split line
  * @str: string to split
  * @delimeter: delimeter, where to split the string
+ * @args: parameters
  * Return: pointer to strings
  */
-char **_strtok(char *str, const char *delimeter)
+void _strtok(char *str, const char *delimeter, char *args[])
 {
 	char *piece;
-	static char *args[10];
 	int i = 0;
 
 	piece = strtok(str, delimeter);
-	args[i++] = piece;
 	while (piece != NULL)
 	{
+		args[i++] = _strdup(piece);
 		piece = strtok(NULL, delimeter);
-		args[i++] = piece;
 	}
 	args[i] = NULL;
-	return (args);
 }

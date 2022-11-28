@@ -10,8 +10,8 @@
 int main(int ac, char *av[], char *env[])
 {
 	(void)ac;
-	(void)env;
+	(void)av;
 
-	shell(av);
+	shell(env);
 	return (0);
 }

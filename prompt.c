@@ -1,44 +1,46 @@
 #include "shell.h"
 
 /**
- * shell - my shell
- * @av: string to receive command line arguements
- * Return: always 0
+ * shell - function to run my custom shell
+ * @env: environmental variables
  */
-int shell(char *av[])
+void shell(char *env[])
 {
-	char *buf = NULL, **args, *str_exe, c;
-	const char delimeter = 32;
-	pid_t fork_id;
-	int factor = 1, i = 0;
+	env_list *linked_env;
+	char cmd[100], *args[20], *_shell, *error;
+	int n_execve, ctrl_d_n;
 
-	while (factor)
+	linked_env = env_linked_list(env);
+	_shell = get_env("_", linked_env);
+	error = ": No such file or directory\n";
+	while (1)
 	{
-		printf("#cisfun$ ");
-		buf = _getline();
-		if (buf == NULL)
+		display();
+		signal(SIGINT, ctrl_c);
+		ctrl_d_n = _getline(cmd, args);
+		if (ctrl_d_n == -1)
 		{
-			factor = 0;
-			continue;
+			free(_shell);
+			free_env_linked_list(linked_env);
 		}
-		args = _strtok(buf, &delimeter);
-		fork_id = fork();
-		if (fork_id  == 0)
+		ctrl_d(ctrl_d_n);
+		if (_strcmp(cmd, "exit") == 0)
 		{
-			if (execve(args[0], args, NULL) == -1)
+			free_double_ptr(args);
+			free(_shell);
+			free_env_linked_list(linked_env);	
+			exit(0);
+		}
+		if (fork() != 0)
+			wait(NULL);
+		else
+		{
+			n_execve = execve(cmd, args, NULL);
+			if (n_execve == -1)
 			{
-				str_exe = av[0];
-				while (str_exe[i])
-				{
-					c = str_exe[i++];
-					write(1, &c, 1);
-				}
-				perror(": No such file or directory\n");
+				write(1, _shell, _strlen(_shell));
+				write(1, error, _strlen(error));
 			}
 		}
-		else
-			wait(NULL);
 	}
-	putchar(10); /* newline */
-	return (0);
 }
